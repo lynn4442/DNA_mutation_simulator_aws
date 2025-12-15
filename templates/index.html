@@ -1,517 +1,524 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DNA Mutation Simulator</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>DNA Mutation Simulator</title>
 
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css">
+	<!-- Bootstrap 5 CSS -->
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+	<!-- Bootstrap Icons -->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css">
 
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+	<!-- Google Fonts -->
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 
-    <style>
-        :root {
-            --primary-dark: #2d3748;
-            --secondary-dark: #4a5568;
-            --accent-primary: #718096;
-            --accent-light: #a0aec0;
-            --gray-50: #f9fafb;
-            --gray-100: #f3f4f6;
-            --gray-200: #e5e7eb;
-            --gray-700: #374151;
-            --gray-800: #1f2937;
-            --gray-900: #111827;
-            --text-light: #f5f5f5;
-            --text-muted: #9ca3af;
-            --card-bg: #ffffff;
-            --shadow-elegant: 0 8px 32px rgba(0, 0, 0, 0.12);
-        }
+	<style>
+		:root {
+			--primary-dark: #2d3748;
+			--secondary-dark: #4a5568;
+			--accent-primary: #718096;
+			--accent-light: #a0aec0;
+			--gray-50: #f9fafb;
+			--gray-100: #f3f4f6;
+			--gray-200: #e5e7eb;
+			--gray-700: #374151;
+			--gray-800: #1f2937;
+			--gray-900: #111827;
+			--text-light: #f5f5f5;
+			--text-muted: #9ca3af;
+			--card-bg: #ffffff;
+			--shadow-elegant: 0 8px 32px rgba(0, 0, 0, 0.12);
+		}
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #1f2937 0%, #374151 50%, #4b5563 100%);
-            min-height: 100vh;
-            padding: 40px 0;
-            color: #333;
-        }
+		body {
+			font-family: 'Inter', sans-serif;
+			background: linear-gradient(135deg, #1f2937 0%, #374151 50%, #4b5563 100%);
+			min-height: 100vh;
+			padding: 40px 0;
+			color: #333;
+		}
 
-        .main-card {
-            border-radius: 20px;
-            box-shadow: var(--shadow-elegant);
-            overflow: hidden;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
+		.main-card {
+			border-radius: 20px;
+			box-shadow: var(--shadow-elegant);
+			overflow: hidden;
+			backdrop-filter: blur(10px);
+			border: 1px solid rgba(255, 255, 255, 0.1);
+		}
 
-        .header-gradient {
-            background: linear-gradient(135deg, var(--gray-800) 0%, var(--gray-900) 100%);
-            color: var(--text-light);
-            padding: 50px 40px;
-            position: relative;
-            overflow: hidden;
-        }
+		.header-gradient {
+			background: linear-gradient(135deg, var(--gray-800) 0%, var(--gray-900) 100%);
+			color: var(--text-light);
+			padding: 50px 40px;
+			position: relative;
+			overflow: hidden;
+		}
 
-        .header-gradient::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: radial-gradient(circle at 20% 50%, rgba(160, 174, 192, 0.1) 0%, transparent 50%);
-            pointer-events: none;
-        }
+		.header-gradient::before {
+			content: '';
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			background: radial-gradient(circle at 20% 50%, rgba(160, 174, 192, 0.1) 0%, transparent 50%);
+			pointer-events: none;
+		}
 
-        .header-gradient h1 {
-            font-family: 'Playfair Display', serif;
-            font-weight: 700;
-            font-size: 2.8rem;
-            letter-spacing: 1px;
-            margin-bottom: 15px;
-            position: relative;
-        }
+		.header-gradient h1 {
+			font-family: 'Playfair Display', serif;
+			font-weight: 700;
+			font-size: 2.8rem;
+			letter-spacing: 1px;
+			margin-bottom: 15px;
+			position: relative;
+		}
 
-        .header-gradient .lead {
-            font-weight: 300;
-            font-size: 1.1rem;
-            letter-spacing: 0.5px;
-            opacity: 0.95;
-            position: relative;
-        }
+		.header-gradient .lead {
+			font-weight: 300;
+			font-size: 1.1rem;
+			letter-spacing: 0.5px;
+			opacity: 0.95;
+			position: relative;
+		}
 
-        .header-gradient i {
-            color: var(--accent-light);
-            font-size: 3rem;
-            display: inline-block;
-            margin-right: 15px;
-        }
+		.header-gradient i {
+			color: var(--accent-light);
+			font-size: 3rem;
+			display: inline-block;
+			margin-right: 15px;
+		}
 
-        .sequence-box {
-            font-family: 'Courier New', monospace;
-            font-size: 13px;
-            background-color: var(--gray-50);
-            padding: 20px;
-            border-radius: 12px;
-            word-wrap: break-word;
-            white-space: pre-wrap;
-            border-left: 3px solid var(--gray-200);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-            transition: all 0.3s ease;
-        }
+		.sequence-box {
+			font-family: 'Courier New', monospace;
+			font-size: 13px;
+			background-color: var(--gray-50);
+			padding: 20px;
+			border-radius: 12px;
+			word-wrap: break-word;
+			white-space: pre-wrap;
+			border-left: 3px solid var(--gray-200);
+			box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+			transition: all 0.3s ease;
+		}
 
-        .sequence-box:hover {
-            border-left-color: var(--accent-primary);
-            box-shadow: 0 4px 12px rgba(113, 128, 150, 0.15);
-        }
+		.sequence-box:hover {
+			border-left-color: var(--accent-primary);
+			box-shadow: 0 4px 12px rgba(113, 128, 150, 0.15);
+		}
 
-        .protein-box {
-            background: linear-gradient(135deg, var(--gray-100) 0%, var(--gray-50) 100%);
-            border-left: 3px solid var(--accent-primary);
-            font-weight: 500;
-        }
+		.protein-box {
+			background: linear-gradient(135deg, var(--gray-100) 0%, var(--gray-50) 100%);
+			border-left: 3px solid var(--accent-primary);
+			font-weight: 500;
+		}
 
-        .btn-elegant {
-            background: linear-gradient(135deg, var(--gray-700) 0%, var(--gray-800) 100%);
-            border: none;
-            color: white;
-            padding: 15px 50px;
-            font-weight: 600;
-            font-size: 1.05rem;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            border-radius: 50px;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(55, 65, 81, 0.3);
-            position: relative;
-            overflow: hidden;
-        }
+		.btn-elegant {
+			background: linear-gradient(135deg, var(--gray-700) 0%, var(--gray-800) 100%);
+			border: none;
+			color: white;
+			padding: 15px 50px;
+			font-weight: 600;
+			font-size: 1.05rem;
+			letter-spacing: 1px;
+			text-transform: uppercase;
+			border-radius: 50px;
+			transition: all 0.3s ease;
+			box-shadow: 0 4px 15px rgba(55, 65, 81, 0.3);
+			position: relative;
+			overflow: hidden;
+		}
 
-        .btn-elegant::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.2);
-            transform: translate(-50%, -50%);
-            transition: width 0.6s, height 0.6s;
-        }
+		.btn-elegant::before {
+			content: '';
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			width: 0;
+			height: 0;
+			border-radius: 50%;
+			background: rgba(255, 255, 255, 0.2);
+			transform: translate(-50%, -50%);
+			transition: width 0.6s, height 0.6s;
+		}
 
-        .btn-elegant:hover::before {
-            width: 300px;
-            height: 300px;
-        }
+		.btn-elegant:hover::before {
+			width: 300px;
+			height: 300px;
+		}
 
-        .btn-elegant:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(55, 65, 81, 0.5);
-            color: white;
-        }
+		.btn-elegant:hover {
+			transform: translateY(-3px);
+			box-shadow: 0 8px 25px rgba(55, 65, 81, 0.5);
+			color: white;
+		}
 
-        .btn-elegant:active {
-            transform: translateY(-1px);
-        }
+		.btn-elegant:active {
+			transform: translateY(-1px);
+		}
 
-        .mutation-card {
-            transition: all 0.3s ease;
-            border-radius: 15px;
-            overflow: hidden;
-            border: 1px solid rgba(0, 0, 0, 0.08);
-        }
+		.mutation-card {
+			transition: all 0.3s ease;
+			border-radius: 15px;
+			overflow: hidden;
+			border: 1px solid rgba(0, 0, 0, 0.08);
+		}
 
-        .mutation-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
-        }
+		.mutation-card:hover {
+			transform: translateY(-8px);
+			box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
+		}
 
-        .mutation-card-header {
-            background: linear-gradient(135deg, var(--gray-700) 0%, var(--gray-800) 100%);
-            padding: 20px 25px;
-            border-bottom: 2px solid var(--accent-primary);
-        }
+		.mutation-card-header {
+			background: linear-gradient(135deg, var(--gray-700) 0%, var(--gray-800) 100%);
+			padding: 20px 25px;
+			border-bottom: 2px solid var(--accent-primary);
+		}
 
-        .badge-effect-unchanged {
-            background: linear-gradient(135deg, #059669 0%, #047857 100%);
-            color: white;
-        }
+		.badge-effect-unchanged {
+			background: linear-gradient(135deg, #059669 0%, #047857 100%);
+			color: white;
+		}
 
-        .badge-effect-changed {
-            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-            color: white;
-        }
+		.badge-effect-changed {
+			background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+			color: white;
+		}
 
-        .badge-effect-shorter,
-        .badge-effect-longer {
-            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
-            color: white;
-        }
+		.badge-effect-shorter,
+		.badge-effect-longer {
+			background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+			color: white;
+		}
 
-        .config-card {
-            background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
-            border-radius: 15px;
-            border: 1px solid rgba(0, 0, 0, 0.08);
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
-        }
+		.config-card {
+			background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+			border-radius: 15px;
+			border: 1px solid rgba(0, 0, 0, 0.08);
+			box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+		}
 
-        .config-card h5 {
-            font-family: 'Playfair Display', serif;
-            font-weight: 600;
-            color: var(--primary-dark);
-            font-size: 1.4rem;
-        }
+		.config-card h5 {
+			font-family: 'Playfair Display', serif;
+			font-weight: 600;
+			color: var(--primary-dark);
+			font-size: 1.4rem;
+		}
 
-        .form-label {
-            font-weight: 500;
-            color: #374151;
-            margin-bottom: 10px;
-            font-size: 0.95rem;
-            letter-spacing: 0.3px;
-        }
+		.form-label {
+			font-weight: 500;
+			color: #374151;
+			margin-bottom: 10px;
+			font-size: 0.95rem;
+			letter-spacing: 0.3px;
+		}
 
-        .form-select,
-        .form-control {
-            border-radius: 10px;
-            border: 2px solid #e5e7eb;
-            padding: 12px 16px;
-            transition: all 0.3s ease;
-        }
+		.form-select,
+		.form-control {
+			border-radius: 10px;
+			border: 2px solid #e5e7eb;
+			padding: 12px 16px;
+			transition: all 0.3s ease;
+		}
 
-        .form-select:focus,
-        .form-control:focus {
-            border-color: var(--accent-primary);
-            box-shadow: 0 0 0 3px rgba(113, 128, 150, 0.1);
-        }
+		.form-select:focus,
+		.form-control:focus {
+			border-color: var(--accent-primary);
+			box-shadow: 0 0 0 3px rgba(113, 128, 150, 0.1);
+		}
 
-        .spinner-border {
-            color: var(--accent-primary) !important;
-        }
+		.spinner-border {
+			color: var(--accent-primary) !important;
+		}
 
-        .alert-info {
-            background: linear-gradient(135deg, #e0f2fe 0%, #dbeafe 100%);
-            border-left: 4px solid #0284c7;
-            border-radius: 12px;
-        }
+		.alert-info {
+			background: linear-gradient(135deg, #e0f2fe 0%, #dbeafe 100%);
+			border-left: 4px solid #0284c7;
+			border-radius: 12px;
+		}
 
-        .section-heading {
-            font-family: 'Playfair Display', serif;
-            font-weight: 600;
-            color: #1f2937;
-            margin-bottom: 15px;
-        }
+		.section-heading {
+			font-family: 'Playfair Display', serif;
+			font-weight: 600;
+			color: #1f2937;
+			margin-bottom: 15px;
+		}
 
-        .stats-card {
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            overflow: hidden;
-        }
+		.stats-card {
+			background: white;
+			border-radius: 15px;
+			box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+			overflow: hidden;
+		}
 
-        .stats-card-header {
-            background: linear-gradient(135deg, var(--gray-50) 0%, var(--gray-100) 100%);
-            padding: 20px 25px;
-            border-bottom: 2px solid var(--accent-primary);
-        }
+		.stats-card-header {
+			background: linear-gradient(135deg, var(--gray-50) 0%, var(--gray-100) 100%);
+			padding: 20px 25px;
+			border-bottom: 2px solid var(--accent-primary);
+		}
 
-        .stats-card-header h4 {
-            font-family: 'Playfair Display', serif;
-            font-weight: 600;
-            color: var(--primary-dark);
-        }
+		.stats-card-header h4 {
+			font-family: 'Playfair Display', serif;
+			font-weight: 600;
+			color: var(--primary-dark);
+		}
 
-        i.bi {
-            margin-right: 8px;
-        }
-    </style>
+		i.bi {
+			margin-right: 8px;
+		}
+	</style>
 </head>
 <body>
-    <div class="container">
-        <div class="card main-card">
-            <!-- Header -->
-            <div class="header-gradient text-center">
-                <h1 class="mb-2"><i class="bi bi-dna"></i> DNA Mutation Simulator</h1>
-                <p class="lead mb-0">Visualize how DNA mutations affect RNA and proteins</p>
-            </div>
+	<div class="container">
 
-            <!-- Input Section -->
-            <div class="card-body p-4">
-                <div class="card config-card mb-4">
-                    <div class="card-body">
-                        <h5 class="card-title mb-4"><i class="bi bi-sliders"></i> Configuration</h5>
+		<div style="background: #fee2e2; color: #991b1b; padding: 8px 12px; border-radius: 6px; margin-bottom: 15px; text-align: center; border-left: 4px solid #dc2626;">
+			<p style="margin: 0; font-size: 0.85rem;">
+				Small change made - December 15, 2025
+			</p>
+		</div>
 
-                        <div class="mb-3">
-                            <label for="geneSelect" class="form-label fw-bold">Select a Gene:</label>
-                            <select class="form-select form-select-lg" id="geneSelect">
-                                <option value="">-- Choose a gene --</option>
-                                {% for gene_name, sequence in genes.items() %}
-                                <option value="{{ gene_name }}">{{ gene_name }} ({{ sequence|length }} bases)</option>
-                                {% endfor %}
-                                <option value="random">Random DNA</option>
-                                <option value="custom">Custom DNA</option>
-                            </select>
-                        </div>
+		<div class="card main-card">
+			<!-- Header -->
+			<div class="header-gradient text-center">
+				<h1 class="mb-2"><i class="bi bi-dna"></i> DNA Mutation Simulator</h1>
+				<p class="lead mb-0">Visualize how DNA mutations affect RNA and proteins</p>
+			</div>
 
-                        <div class="mb-3 d-none" id="customDnaGroup">
-                            <label for="customDna" class="form-label fw-bold">Enter Custom DNA Sequence:</label>
-                            <textarea class="form-control font-monospace" id="customDna" rows="3"
-                                      placeholder="Enter DNA sequence (A, T, G, C only). ATG start codon will be added if not present."></textarea>
-                            <div class="form-text">Enter nucleotides: A (Adenine), T (Thymine), G (Guanine), C (Cytosine)</div>
-                        </div>
+			<!-- Input Section -->
+			<div class="card-body p-4">
+				<div class="card config-card mb-4">
+					<div class="card-body">
+						<h5 class="card-title mb-4"><i class="bi bi-sliders"></i> Configuration</h5>
 
-                        <div class="mb-4">
-                            <label for="numMutations" class="form-label fw-bold">Number of Mutations:</label>
-                            <input type="number" class="form-control form-control-lg" id="numMutations"
-                                   min="1" max="10" value="3">
-                            <div class="form-text">Choose between 1 and 10 mutations</div>
-                        </div>
+						<div class="mb-3">
+							<label for="geneSelect" class="form-label fw-bold">Select a Gene:</label>
+							<select class="form-select form-select-lg" id="geneSelect">
+								<option value="">-- Choose a gene --</option>
+								{% for gene_name, sequence in genes.items() %}
+								<option value="{{ gene_name }}">{{ gene_name }} ({{ sequence|length }} bases)</option>
+								{% endfor %}
+								<option value="random">Random DNA</option>
+								<option value="custom">Custom DNA</option>
+							</select>
+						</div>
 
-                        <div class="text-center">
-                            <button class="btn btn-elegant btn-lg" id="mutateBtn" onclick="runSimulation()">
-                                <i class="bi bi-arrow-repeat"></i> Generate Mutations
-                            </button>
-                        </div>
-                    </div>
-                </div>
+						<div class="mb-3 d-none" id="customDnaGroup">
+							<label for="customDna" class="form-label fw-bold">Enter Custom DNA Sequence:</label>
+							<textarea class="form-control font-monospace" id="customDna" rows="3"
+									  placeholder="Enter DNA sequence (A, T, G, C only). ATG start codon will be added if not present."></textarea>
+							<div class="form-text">Enter nucleotides: A (Adenine), T (Thymine), G (Guanine), C (Cytosine)</div>
+						</div>
 
-                <!-- Loading Spinner -->
-                <div id="loading" class="d-none">
-                    <div class="text-center py-5">
-                        <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
-                            <span class="visually-hidden">Loading...</span>
-                        </div>
-                        <p class="mt-3 text-primary fw-bold">Generating mutations and visualizations...</p>
-                    </div>
-                </div>
+						<div class="mb-4">
+							<label for="numMutations" class="form-label fw-bold">Number of Mutations:</label>
+							<input type="number" class="form-control form-control-lg" id="numMutations"
+								   min="1" max="10" value="3">
+							<div class="form-text">Choose between 1 and 10 mutations</div>
+						</div>
 
-                <!-- Results Section -->
-                <div id="results"></div>
-            </div>
-        </div>
-    </div>
+						<div class="text-center">
+							<button class="btn btn-elegant btn-lg" id="mutateBtn" onclick="runSimulation()">
+								<i class="bi bi-arrow-repeat"></i> Generate Mutations
+							</button>
+						</div>
+					</div>
+				</div>
 
-    <!-- Bootstrap 5 JS Bundle -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+				<!-- Loading Spinner -->
+				<div id="loading" class="d-none">
+					<div class="text-center py-5">
+						<div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+							<span class="visually-hidden">Loading...</span>
+						</div>
+						<p class="mt-3 text-primary fw-bold">Generating mutations and visualizations...</p>
+					</div>
+				</div>
 
-    <script>
-        document.getElementById('geneSelect').addEventListener('change', function() {
-            const customGroup = document.getElementById('customDnaGroup');
-            if (this.value === 'custom') {
-                customGroup.classList.remove('d-none');
-            } else {
-                customGroup.classList.add('d-none');
-            }
-        });
+				<!-- Results Section -->
+				<div id="results"></div>
+			</div>
+		</div>
+	</div>
 
-        async function runSimulation() {
-            const geneSelect = document.getElementById('geneSelect').value;
-            const numMutations = document.getElementById('numMutations').value;
-            const customDna = document.getElementById('customDna').value;
+	<!-- Bootstrap 5 JS Bundle -->
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
-            if (!geneSelect) {
-                showAlert('Please select a gene or option', 'warning');
-                return;
-            }
+	<script>
+		document.getElementById('geneSelect').addEventListener('change', function() {
+			const customGroup = document.getElementById('customDnaGroup');
+			if (this.value === 'custom') {
+				customGroup.classList.remove('d-none');
+			} else {
+				customGroup.classList.add('d-none');
+			}
+		});
 
-            if (geneSelect === 'custom' && !customDna) {
-                showAlert('Please enter a custom DNA sequence', 'warning');
-                return;
-            }
+		async function runSimulation() {
+			const geneSelect = document.getElementById('geneSelect').value;
+			const numMutations = document.getElementById('numMutations').value;
+			const customDna = document.getElementById('customDna').value;
 
-            const button = document.getElementById('mutateBtn');
-            const loading = document.getElementById('loading');
-            const results = document.getElementById('results');
+			if (!geneSelect) {
+				showAlert('Please select a gene or option', 'warning');
+				return;
+			}
 
-            button.disabled = true;
-            loading.classList.remove('d-none');
-            results.innerHTML = '';
+			if (geneSelect === 'custom' && !customDna) {
+				showAlert('Please enter a custom DNA sequence', 'warning');
+				return;
+			}
 
-            try {
-                const response = await fetch('/mutate', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        gene: geneSelect === 'custom' ? null : geneSelect,
-                        num_mutations: numMutations,
-                        custom_dna: geneSelect === 'custom' ? customDna : ''
-                    })
-                });
+			const button = document.getElementById('mutateBtn');
+			const loading = document.getElementById('loading');
+			const results = document.getElementById('results');
 
-                const data = await response.json();
-                displayResults(data);
-            } catch (error) {
-                showAlert('Error: ' + error.message, 'danger');
-            } finally {
-                button.disabled = false;
-                loading.classList.add('d-none');
-            }
-        }
+			button.disabled = true;
+			loading.classList.remove('d-none');
+			results.innerHTML = '';
 
-        function showAlert(message, type) {
-            const results = document.getElementById('results');
-            results.innerHTML = `
-                <div class="alert alert-${type} alert-dismissible fade show" role="alert">
-                    <i class="bi bi-exclamation-triangle-fill"></i> ${message}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            `;
-        }
+			try {
+				const response = await fetch('/mutate', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({
+						gene: geneSelect === 'custom' ? null : geneSelect,
+						num_mutations: numMutations,
+						custom_dna: geneSelect === 'custom' ? customDna : ''
+					})
+				});
 
-        function displayResults(data) {
-            const results = document.getElementById('results');
-            let html = '';
+				const data = await response.json();
+				displayResults(data);
+			} catch (error) {
+				showAlert('Error: ' + error.message, 'danger');
+			} finally {
+				button.disabled = false;
+				loading.classList.add('d-none');
+			}
+		}
 
-            // Starting Sequence
-            html += `
-                <div class="alert alert-info border-start border-5 border-info" role="alert">
-                    <h4 class="alert-heading"><i class="bi bi-info-circle-fill"></i> Starting Sequence</h4>
-                    <hr>
-                    <h6 class="fw-bold mt-3"><i class="bi bi-bezier2"></i> DNA:</h6>
-                    <div class="sequence-box mb-3">${formatSequence(data.starting_info.dna)}</div>
+		function showAlert(message, type) {
+			const results = document.getElementById('results');
+			results.innerHTML = `
+				<div class="alert alert-${type} alert-dismissible fade show" role="alert">
+					<i class="bi bi-exclamation-triangle-fill"></i> ${message}
+					<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+				</div>
+			`;
+		}
 
-                    <h6 class="fw-bold mt-3"><i class="bi bi-diagram-3"></i> RNA:</h6>
-                    <div class="sequence-box mb-3">${formatSequence(data.starting_info.rna)}</div>
+		function displayResults(data) {
+			const results = document.getElementById('results');
+			let html = '';
 
-                    <h6 class="fw-bold mt-3"><i class="bi bi-hexagon"></i> Protein:</h6>
-                    <div class="sequence-box protein-box">${data.starting_info.protein}</div>
-                </div>
-            `;
+			// Starting Sequence
+			html += `
+				<div class="alert alert-info border-start border-5 border-info" role="alert">
+					<h4 class="alert-heading"><i class="bi bi-info-circle-fill"></i> Starting Sequence</h4>
+					<hr>
+					<h6 class="fw-bold mt-3"><i class="bi bi-bezier2"></i> DNA:</h6>
+					<div class="sequence-box mb-3">${formatSequence(data.starting_info.dna)}</div>
 
-            // Mutations
-            data.mutations.forEach((mutation, index) => {
-                const badgeClass = getBadgeClass(mutation.effect);
-                const cardColor = getCardColor(index);
+					<h6 class="fw-bold mt-3"><i class="bi bi-diagram-3"></i> RNA:</h6>
+					<div class="sequence-box mb-3">${formatSequence(data.starting_info.rna)}</div>
 
-                html += `
-                    <div class="card mutation-card mb-4 border-start border-5 ${cardColor}">
-                        <div class="mutation-card-header text-white">
-                            <h5 class="mb-0">
-                                <i class="bi bi-lightning-charge-fill"></i> Mutation ${index + 1}: ${mutation.description}
-                            </h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <h6 class="fw-bold text-primary"><i class="bi bi-bezier2"></i> Original DNA:</h6>
-                                    <div class="sequence-box mb-3">${formatSequence(mutation.original_dna)}</div>
+					<h6 class="fw-bold mt-3"><i class="bi bi-hexagon"></i> Protein:</h6>
+					<div class="sequence-box protein-box">${data.starting_info.protein}</div>
+				</div>
+			`;
 
-                                    <h6 class="fw-bold text-success"><i class="bi bi-hexagon"></i> Original Protein:</h6>
-                                    <div class="sequence-box protein-box">${mutation.original_protein}</div>
-                                </div>
-                                <div class="col-md-6">
-                                    <h6 class="fw-bold text-danger"><i class="bi bi-bezier2"></i> Mutated DNA:</h6>
-                                    <div class="sequence-box mb-3">${formatSequence(mutation.mutated_dna)}</div>
+			// Mutations
+			data.mutations.forEach((mutation, index) => {
+				const badgeClass = getBadgeClass(mutation.effect);
+				const cardColor = getCardColor(index);
 
-                                    <h6 class="fw-bold text-warning"><i class="bi bi-hexagon"></i> Mutated Protein:</h6>
-                                    <div class="sequence-box protein-box">${mutation.mutated_protein}</div>
-                                </div>
-                            </div>
+				html += `
+					<div class="card mutation-card mb-4 border-start border-5 ${cardColor}">
+						<div class="mutation-card-header text-white">
+							<h5 class="mb-0">
+								<i class="bi bi-lightning-charge-fill"></i> Mutation ${index + 1}: ${mutation.description}
+							</h5>
+						</div>
+						<div class="card-body">
+							<div class="row">
+								<div class="col-md-6">
+									<h6 class="fw-bold text-primary"><i class="bi bi-bezier2"></i> Original DNA:</h6>
+									<div class="sequence-box mb-3">${formatSequence(mutation.original_dna)}</div>
 
-                            <div class="mt-3">
-                                <span class="badge ${badgeClass} fs-6 px-3 py-2">
-                                    <i class="bi bi-clipboard-data"></i> Effect: ${mutation.effect.toUpperCase()}
-                                    ${mutation.amino_changes > 0 ? `(${mutation.amino_changes} amino acid changes)` : ''}
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            });
+									<h6 class="fw-bold text-success"><i class="bi bi-hexagon"></i> Original Protein:</h6>
+									<div class="sequence-box protein-box">${mutation.original_protein}</div>
+								</div>
+								<div class="col-md-6">
+									<h6 class="fw-bold text-danger"><i class="bi bi-bezier2"></i> Mutated DNA:</h6>
+									<div class="sequence-box mb-3">${formatSequence(mutation.mutated_dna)}</div>
 
-            // Visualization
-            if (data.visualization) {
-                html += `
-                    <div class="card stats-card mt-4">
-                        <div class="stats-card-header">
-                            <h4 class="mb-0"><i class="bi bi-bar-chart-fill"></i> Mutation Statistics</h4>
-                        </div>
-                        <div class="card-body text-center">
-                            <img src="data:image/png;base64,${data.visualization}"
-                                 alt="Mutation Statistics" class="img-fluid rounded shadow">
-                        </div>
-                    </div>
-                `;
-            }
+									<h6 class="fw-bold text-warning"><i class="bi bi-hexagon"></i> Mutated Protein:</h6>
+									<div class="sequence-box protein-box">${mutation.mutated_protein}</div>
+								</div>
+							</div>
 
-            results.innerHTML = html;
-        }
+							<div class="mt-3">
+								<span class="badge ${badgeClass} fs-6 px-3 py-2">
+									<i class="bi bi-clipboard-data"></i> Effect: ${mutation.effect.toUpperCase()}
+									${mutation.amino_changes > 0 ? `(${mutation.amino_changes} amino acid changes)` : ''}
+								</span>
+							</div>
+						</div>
+					</div>
+				`;
+			});
 
-        function formatSequence(sequence) {
-            let formatted = '';
-            for (let i = 0; i < sequence.length; i += 60) {
-                formatted += sequence.substring(i, i + 60) + '\n';
-            }
-            return formatted.trim();
-        }
+			// Visualization
+			if (data.visualization) {
+				html += `
+					<div class="card stats-card mt-4">
+						<div class="stats-card-header">
+							<h4 class="mb-0"><i class="bi bi-bar-chart-fill"></i> Mutation Statistics</h4>
+						</div>
+						<div class="card-body text-center">
+							<img src="data:image/png;base64,${data.visualization}"
+								 alt="Mutation Statistics" class="img-fluid rounded shadow">
+						</div>
+					</div>
+				`;
+			}
 
-        function getBadgeClass(effect) {
-            const classes = {
-                'unchanged': 'badge-effect-unchanged',
-                'changed': 'badge-effect-changed',
-                'shorter': 'badge-effect-shorter',
-                'longer': 'badge-effect-longer'
-            };
-            return classes[effect] || 'bg-secondary';
-        }
+			results.innerHTML = html;
+		}
 
-        function getCardColor(index) {
-            const colors = ['border-primary', 'border-success', 'border-warning', 'border-danger', 'border-info'];
-            return colors[index % colors.length];
-        }
-    </script>
+		function formatSequence(sequence) {
+			let formatted = '';
+			for (let i = 0; i < sequence.length; i += 60) {
+				formatted += sequence.substring(i, i + 60) + '\n';
+			}
+			return formatted.trim();
+		}
+
+		function getBadgeClass(effect) {
+			const classes = {
+				'unchanged': 'badge-effect-unchanged',
+				'changed': 'badge-effect-changed',
+				'shorter': 'badge-effect-shorter',
+				'longer': 'badge-effect-longer'
+			};
+			return classes[effect] || 'bg-secondary';
+		}
+
+		function getCardColor(index) {
+			const colors = ['border-primary', 'border-success', 'border-warning', 'border-danger', 'border-info'];
+			return colors[index % colors.length];
+		}
+	</script>
 </body>
 </html>
