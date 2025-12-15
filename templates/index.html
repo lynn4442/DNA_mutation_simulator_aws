@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DNA Mutation Simulator</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css">
+
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 30px 0;
+        }
+
+        .main-card {
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+
+        .header-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px 15px 0 0;
+        }
+
+        .sequence-box {
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            word-wrap: break-word;
+            white-space: pre-wrap;
+            border-left: 4px solid #6c757d;
+        }
+
+        .protein-box {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+        }
+
+        .btn-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+            padding: 12px 40px;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-gradient:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+            color: white;
+        }
+
+        .btn-gradient:active {
+            transform: translateY(0);
+        }
+
+        .mutation-card {
+            transition: transform 0.2s;
+        }
+
+        .mutation-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .badge-effect-unchanged {
+            background-color: #28a745;
+        }
+
+        .badge-effect-changed {
+            background-color: #ffc107;
+            color: #000;
+        }
+
+        .badge-effect-shorter,
+        .badge-effect-longer {
+            background-color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card main-card">
+            <!-- Header -->
+            <div class="header-gradient text-center">
+                <h1 class="mb-2"><i class="bi bi-dna"></i> DNA Mutation Simulator</h1>
+                <p class="lead mb-0">Visualize how DNA mutations affect RNA and proteins</p>
+            </div>
+
+            <!-- Input Section -->
+            <div class="card-body p-4">
+                <div class="card bg-light mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title mb-4"><i class="bi bi-sliders"></i> Configuration</h5>
+
+                        <div class="mb-3">
+                            <label for="geneSelect" class="form-label fw-bold">Select a Gene:</label>
+                            <select class="form-select form-select-lg" id="geneSelect">
+                                <option value="">-- Choose a gene --</option>
+                                {% for gene_name, sequence in genes.items() %}
+                                <option value="{{ gene_name }}">{{ gene_name }} ({{ sequence|length }} bases)</option>
+                                {% endfor %}
+                                <option value="random">Random DNA</option>
+                                <option value="custom">Custom DNA</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3 d-none" id="customDnaGroup">
+                            <label for="customDna" class="form-label fw-bold">Enter Custom DNA Sequence:</label>
+                            <textarea class="form-control font-monospace" id="customDna" rows="3"
+                                      placeholder="Enter DNA sequence (A, T, G, C only). ATG start codon will be added if not present."></textarea>
+                            <div class="form-text">Enter nucleotides: A (Adenine), T (Thymine), G (Guanine), C (Cytosine)</div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="numMutations" class="form-label fw-bold">Number of Mutations:</label>
+                            <input type="number" class="form-control form-control-lg" id="numMutations"
+                                   min="1" max="10" value="3">
+                            <div class="form-text">Choose between 1 and 10 mutations</div>
+                        </div>
+
+                        <div class="text-center">
+                            <button class="btn btn-gradient btn-lg" id="mutateBtn" onclick="runSimulation()">
+                                <i class="bi bi-arrow-repeat"></i> Generate Mutations
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Loading Spinner -->
+                <div id="loading" class="d-none">
+                    <div class="text-center py-5">
+                        <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p class="mt-3 text-primary fw-bold">Generating mutations and visualizations...</p>
+                    </div>
+                </div>
+
+                <!-- Results Section -->
+                <div id="results"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        document.getElementById('geneSelect').addEventListener('change', function() {
+            const customGroup = document.getElementById('customDnaGroup');
+            if (this.value === 'custom') {
+                customGroup.classList.remove('d-none');
+            } else {
+                customGroup.classList.add('d-none');
+            }
+        });
+
+        async function runSimulation() {
+            const geneSelect = document.getElementById('geneSelect').value;
+            const numMutations = document.getElementById('numMutations').value;
+            const customDna = document.getElementById('customDna').value;
+
+            if (!geneSelect) {
+                showAlert('Please select a gene or option', 'warning');
+                return;
+            }
+
+            if (geneSelect === 'custom' && !customDna) {
+                showAlert('Please enter a custom DNA sequence', 'warning');
+                return;
+            }
+
+            const button = document.getElementById('mutateBtn');
+            const loading = document.getElementById('loading');
+            const results = document.getElementById('results');
+
+            button.disabled = true;
+            loading.classList.remove('d-none');
+            results.innerHTML = '';
+
+            try {
+                const response = await fetch('/mutate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        gene: geneSelect === 'custom' ? null : geneSelect,
+                        num_mutations: numMutations,
+                        custom_dna: geneSelect === 'custom' ? customDna : ''
+                    })
+                });
+
+                const data = await response.json();
+                displayResults(data);
+            } catch (error) {
+                showAlert('Error: ' + error.message, 'danger');
+            } finally {
+                button.disabled = false;
+                loading.classList.add('d-none');
+            }
+        }
+
+        function showAlert(message, type) {
+            const results = document.getElementById('results');
+            results.innerHTML = `
+                <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill"></i> ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            `;
+        }
+
+        function displayResults(data) {
+            const results = document.getElementById('results');
+            let html = '';
+
+            // Starting Sequence
+            html += `
+                <div class="alert alert-info border-start border-5 border-info" role="alert">
+                    <h4 class="alert-heading"><i class="bi bi-info-circle-fill"></i> Starting Sequence</h4>
+                    <hr>
+                    <h6 class="fw-bold mt-3"><i class="bi bi-bezier2"></i> DNA:</h6>
+                    <div class="sequence-box mb-3">${formatSequence(data.starting_info.dna)}</div>
+
+                    <h6 class="fw-bold mt-3"><i class="bi bi-diagram-3"></i> RNA:</h6>
+                    <div class="sequence-box mb-3">${formatSequence(data.starting_info.rna)}</div>
+
+                    <h6 class="fw-bold mt-3"><i class="bi bi-hexagon"></i> Protein:</h6>
+                    <div class="sequence-box protein-box">${data.starting_info.protein}</div>
+                </div>
+            `;
+
+            // Mutations
+            data.mutations.forEach((mutation, index) => {
+                const badgeClass = getBadgeClass(mutation.effect);
+                const cardColor = getCardColor(index);
+
+                html += `
+                    <div class="card mutation-card mb-4 border-start border-5 ${cardColor}">
+                        <div class="card-header bg-gradient text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                            <h5 class="mb-0">
+                                <i class="bi bi-lightning-charge-fill"></i> Mutation ${index + 1}: ${mutation.description}
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h6 class="fw-bold text-primary"><i class="bi bi-bezier2"></i> Original DNA:</h6>
+                                    <div class="sequence-box mb-3">${formatSequence(mutation.original_dna)}</div>
+
+                                    <h6 class="fw-bold text-success"><i class="bi bi-hexagon"></i> Original Protein:</h6>
+                                    <div class="sequence-box protein-box">${mutation.original_protein}</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6 class="fw-bold text-danger"><i class="bi bi-bezier2"></i> Mutated DNA:</h6>
+                                    <div class="sequence-box mb-3">${formatSequence(mutation.mutated_dna)}</div>
+
+                                    <h6 class="fw-bold text-warning"><i class="bi bi-hexagon"></i> Mutated Protein:</h6>
+                                    <div class="sequence-box protein-box">${mutation.mutated_protein}</div>
+                                </div>
+                            </div>
+
+                            <div class="mt-3">
+                                <span class="badge ${badgeClass} fs-6 px-3 py-2">
+                                    <i class="bi bi-clipboard-data"></i> Effect: ${mutation.effect.toUpperCase()}
+                                    ${mutation.amino_changes > 0 ? `(${mutation.amino_changes} amino acid changes)` : ''}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            // Visualization
+            if (data.visualization) {
+                html += `
+                    <div class="card mt-4">
+                        <div class="card-header bg-light">
+                            <h4 class="mb-0"><i class="bi bi-bar-chart-fill"></i> Mutation Statistics</h4>
+                        </div>
+                        <div class="card-body text-center">
+                            <img src="data:image/png;base64,${data.visualization}"
+                                 alt="Mutation Statistics" class="img-fluid rounded shadow">
+                        </div>
+                    </div>
+                `;
+            }
+
+            results.innerHTML = html;
+        }
+
+        function formatSequence(sequence) {
+            let formatted = '';
+            for (let i = 0; i < sequence.length; i += 60) {
+                formatted += sequence.substring(i, i + 60) + '\n';
+            }
+            return formatted.trim();
+        }
+
+        function getBadgeClass(effect) {
+            const classes = {
+                'unchanged': 'badge-effect-unchanged',
+                'changed': 'badge-effect-changed',
+                'shorter': 'badge-effect-shorter',
+                'longer': 'badge-effect-longer'
+            };
+            return classes[effect] || 'bg-secondary';
+        }
+
+        function getCardColor(index) {
+            const colors = ['border-primary', 'border-success', 'border-warning', 'border-danger', 'border-info'];
+            return colors[index % colors.length];
+        }
+    </script>
+</body>
+</html>
